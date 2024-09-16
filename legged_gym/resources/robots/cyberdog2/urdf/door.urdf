@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="door">
+
+  <link name="door_panel">
+    <visual>
+      <origin xyz="0.45 -0.025 0"/>
+      <geometry>
+        <box size="0.9 0.05 2.8"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.45 -0.025 0"/>
+      <geometry>
+        <box size="0.9 0.05 2.8"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="left_door_frame">
+    <visual>
+      <geometry>
+        <box size="0.05 0.06 2.84"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.06 2.84"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="right_door_frame">
+    <visual>
+      <geometry>
+        <box size="0.05 0.06 2.84"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.06 2.84"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="left_hinge" type="revolute">
+    <parent link="left_door_frame"/>
+    <child link="door_panel"/>
+    <origin xyz="0.025 0.03 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1.5708"/>
+  </joint>
+
+  <joint name="left_to_right" type="fixed">
+    <parent link="left_door_frame"/>
+    <child link="right_door_frame"/>
+    <origin xyz="0.97 0 0"/>
+  </joint>
+  
+</robot>
