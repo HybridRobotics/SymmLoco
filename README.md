@@ -1,7 +1,7 @@
 # Leveraging Symmetry in RL-based Legged Locomotion Control
 This repository provides the environment used to train cyberdog2 to perform three tasks: Door Pushing, Stand Turning (Stand Dancing), Slope Walking. The training process uses three different methods: the vanilla PPO, PPO with data augmentation, PPO with equivariant / invariant networks.
 
-The code is modified from Isaac Gym Environments for Legged Robots and based on [legged_stand_dance](https://github.com/IrisLi17/legged_stand_dance).
+The code is modified from Isaac Gym Environments for Legged Robots and based on [legged_stand_dance](https://github.com/IrisLi17/legged_stand_dance) and [MorphoSymm](https://github.com/Danfoa/MorphoSymm).
 
 ### Useful Links ###
 Project website: https://suz-tsinghua.github.io/SymmLoco-page/
