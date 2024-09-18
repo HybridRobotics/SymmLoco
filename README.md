@@ -4,7 +4,7 @@
 1. [Overview](#overview)
 2. [Installation](#installation)
 3. [Training a Model](#training)
-4. [Play a trained policy](#playing)
+4. [Playing a trained policy](#playing)
 5. [Bibtex](#bibtex)
 
 ## Overview <a name="overview"></a>
@@ -84,7 +84,7 @@ python scripts/train_dribbling.py --task=emlp --headless
     - `--device`: The device used for simulation and RL training. Default is 'cuda:0'.
 
 
-## Play a trained policy <a name="playing"></a>
+## Playing a trained policy <a name="playing"></a>
 
 We provide a trained policy for each method. They are saved in `SymmLoco/dribblebot/tmp/`. Play the trained `emlp` policy by running:
 
