@@ -254,7 +254,7 @@ class LeggedRobotCfg(BaseConfig):
             contact_collection = 2 # 0: never, 1: last sub-step, 2: all sub-steps (default=2)
 
 class LeggedRobotCfgPPO(BaseConfig):
-    seed = 4
+    seed = 13
     runner_class_name = 'OnPolicyRunner'
     use_wandb = False
     class policy:
