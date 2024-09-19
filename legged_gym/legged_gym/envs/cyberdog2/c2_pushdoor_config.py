@@ -166,6 +166,8 @@ class CyberPushDoorCfgPPO(CyberCommonCfgPPO):
         actor_hidden_dims = [256, 256, 256]
         critic_hidden_dims = [256, 256, 256]
         activation = 'elu'
+    class algorithm( CyberCommonCfgPPO.algorithm ):
+        learning_rate = 0.00025
 
 class CyberPushDoorCfgPPOAug(CyberCommonCfgPPO):
     use_wandb = True
@@ -180,6 +182,8 @@ class CyberPushDoorCfgPPOAug(CyberCommonCfgPPO):
         actor_hidden_dims = [256, 256, 256]
         critic_hidden_dims = [256, 256, 256]
         activation = 'elu'
+    class algorithm( CyberCommonCfgPPO.algorithm ):
+        learning_rate = 0.00025
 
 
 class CyberPushDoorCfgPPOEMLP(CyberCommonCfgPPO):
@@ -195,3 +199,5 @@ class CyberPushDoorCfgPPOEMLP(CyberCommonCfgPPO):
         actor_hidden_dims = [256, 256, 256]
         critic_hidden_dims = [256, 256, 256]
         activation = 'elu'
+    class algorithm( CyberCommonCfgPPO.algorithm ):
+        learning_rate = 0.00025

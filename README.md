@@ -4,7 +4,8 @@
 1. [Overview](#overview)
 2. [Installation](#installation)
 3. [Training a Model](#training)
-4. [Bibtex](#bibtex)
+4. [Playing a trained policy](#playing)
+5. [Bibtex](#bibtex)
 
 ## Overview <a name="overview"></a>
 
@@ -24,7 +25,7 @@ This repository provides an implementation of the paper:
 
 <br>
 
-This repository provides the environment used to train cyberdog2 to perform three tasks: Door Pushing, Stand Turning (Stand Dancing), Slope Walking. The training process uses three different methods: the vanilla PPO (`mlp`), PPO with data augmentation (`aug`), PPO with equivariant / invariant networks (`emlp`).
+This repository provides the environment used to train cyberdog2 to perform four tasks: Door Pushing, Stand Turning (Stand Dancing), Slope Walking and Dribbling. This branch implements Door Pushing, Stand Turning and Slope Walking, while the branch `dribbling` implements the Dribbling task. The training process uses three different methods: the vanilla PPO (`mlp`), PPO with data augmentation (`aug`), PPO with equivariant / invariant networks (`emlp`).
 
 The code is modified from Isaac Gym Environments for Legged Robots and based on [legged_stand_dance](https://github.com/IrisLi17/legged_stand_dance) and [MorphoSymm](https://github.com/Danfoa/MorphoSymm).
 
@@ -102,6 +103,15 @@ python legged_gym/scripts/train.py --task=cyber2_push_door_emlp --headless --rig
 
 ### Troubleshooting ###
 1. If you get the following error: `ImportError: libpython3.8m.so.1.0: cannot open shared object file: No such file or directory`, do: `sudo apt install libpython3.8`
+
+## Playing a trained policy <a name="playing"></a>
+We provide a checkpoint of Door Pushing task trained by `emlp`. Play the trained policy by running:
+
+```bash
+python legged_gym/scripts/play.py --task=cyber2_push_door_emlp --load_run=2024-09-17-23-10-31_ --checkpoint=20000
+```
+
+You should see a quadrupedal robot standing up on its rear legs and pushing the door open.
 
 ## Bibtex <a name="bibtex"></a>
 
