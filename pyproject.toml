@@ -1,0 +1,51 @@
+[project]
+name = "symmloco"
+version = "0.1.0"
+description = "Symmetry-aware RL locomotion on mjlab (SymmLoco, IROS 2024): PPO, PPO with mirror augmentation, PPO with an equivariant actor-critic."
+readme = "README.md"
+requires-python = ">=3.13,<3.15"
+dependencies = [
+  "mjlab>=1.6.0,<1.7",
+  "mujoco",
+  "numpy",
+  "torch",
+]
+
+[dependency-groups]
+dev = [
+    "onnxruntime>=1.31.1",
+    "pre-commit>=4.3.0",
+    "pytest",
+    "ruff>=0.14.14",
+]
+
+[project.entry-points."mjlab.tasks"]
+symmloco = "symmloco.tasks"
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "symmloco"
+
+[tool.uv.sources]
+mjlab = { url = "https://github.com/mujocolab/mjlab/archive/936f7a12537556416addff31babbb1512dd24d70.tar.gz" }
+
+[tool.uv]
+# rsl_rl's `extras` branch provides EquivariantMLPModel and EquivariantGaussianDistribution;
+# mjlab pins the PyPI release, so the override swaps in the same version from git.
+override-dependencies = [
+  "rsl-rl-lib @ https://github.com/leggedrobotics/rsl_rl/archive/0f0aa6b7c1c5edb78cdcdf8d93cda59ed73e6838.tar.gz",
+]
+
+[tool.ruff]
+src = ["src", "tests"]
+indent-width = 2
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B"]
+ignore = ["B011"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
