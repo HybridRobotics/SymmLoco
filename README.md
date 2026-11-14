@@ -1,75 +1,75 @@
-# SymmLoco on mjlab
+# Leveraging Symmetry in RL-based Legged Locomotion Control
 
-The two symmetry methods of **SymmLoco** ("Leveraging Symmetry in RL-based Legged
-Locomotion Control", IROS 2024), PPO with symmetry data augmentation (PPOaug) and PPO with
-an equivariant actor-critic (PPOeqic), are now implemented in rsl_rl: the augmentation in
-its `Symmetry` extension, the equivariant networks on its
-[`extras`](https://github.com/leggedrobotics/rsl_rl/tree/extras) branch. To make them easy
-to use in [mjlab](https://github.com/mujocolab/mjlab), this repository is an mjlab example:
-it trains mjlab's own Unitree G1 flat-terrain velocity task with PPO, PPOaug and PPOeqic.
-The original Isaac Gym implementation lives on the `isaacgym/main` and
-`isaacgym/dribbling` branches.
+This repository provides an implementation of the paper:
 
-| id suffix | method | implementation |
-|---|---|---|
-| `-PPO` | PPO baseline | rsl_rl `MLPModel` |
-| `-PPOaug` | PPO with symmetry data augmentation | rsl_rl `Symmetry` extension with `symmloco.tasks.velocity.mdp:mirror_batch` |
-| `-PPOeqic` | PPO with an equivariant actor-critic | rsl_rl `EquivariantMLPModel` and `EquivariantGaussianDistribution` (`extras` branch), `EquivariantOnPolicyRunner` |
+[**Leveraging Symmetry in RL-based Legged Locomotion Control**](https://suz-tsinghua.github.io/SymmLoco-page/)<br>
+*IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)*, 2024<br>
+[paper](https://arxiv.org/abs/2403.17320) / [project page](https://suz-tsinghua.github.io/SymmLoco-page/)
 
-The environment, rewards and PPO hyperparameters are mjlab's `Mjlab-Velocity-Flat-Unitree-G1`
-unchanged; only the model, distribution and symmetry settings differ between the three
-methods. With PPOeqic the actor mean is equivariant and the critic invariant by
-construction, mirrored joints share their exploration noise, and the observation
-normalizer keeps symmetric statistics.
+> [!NOTE]
+> All three methods of the paper, PPO, PPO with symmetry data augmentation (PPOaug) and PPO
+> with an equivariant actor-critic (PPOeqic), are now implemented on the
+> [`extras`](https://github.com/leggedrobotics/rsl_rl/tree/extras) branch of rsl_rl. To make
+> them easy to use, this branch is a small example built on
+> [mjlab](https://github.com/mujocolab/mjlab): it trains mjlab's Unitree G1 flat-terrain
+> velocity task with each of the three methods. The original Isaac Gym code is on the
+> [`isaacgym/main`](https://github.com/HybridRobotics/SymmLoco/tree/isaacgym/main) and
+> [`isaacgym/dribbling`](https://github.com/HybridRobotics/SymmLoco/tree/isaacgym/dribbling)
+> branches.
 
-## Dependencies
+## Setup
 
-- mjlab is pinned to commit `936f7a1`.
-- `rsl-rl-lib` is overridden (`[tool.uv] override-dependencies`) with the `extras` branch of
-  rsl_rl at commit `0f0aa6b`, which provides the equivariant model. It has the same version
-  as the PyPI release mjlab requires.
-
-## Tasks
-
-| task id | robot | terrain |
-|---|---|---|
-| `VelocityFlat-G1-{PPO,PPOaug,PPOeqic}` | Unitree G1 (29 DoF) | flat |
-
-The tasks are registered through the `mjlab.tasks` entry point, so mjlab's own CLIs see them:
+Install [uv](https://docs.astral.sh/uv/), then:
 
 ```bash
-uv run train VelocityFlat-G1-PPOeqic --env.scene.num-envs 4096
-uv run play VelocityFlat-G1-PPOeqic --wandb-run-path suz_team/symmloco/<run_id>
+git clone https://github.com/HybridRobotics/SymmLoco.git
+cd SymmLoco
+uv sync
 ```
 
-`play` loads the latest `model_<it>.pt` uploaded to that W&B run (`--wandb-checkpoint-name`
-picks another one); `<run_id>` is the id at the end of the run's URL.
+## Usage
 
-## Symmetry
+Tasks:
 
-The reflection mirrors the world through the xz-plane and swaps the robot's left and right
-sides; every observation term and the action vector transform as a signed permutation
-`x -> sign * x[perm]`. `tasks/velocity/mdp/symmetry.py` declares how each observation term transforms
-(`TERM_KINDS`, keyed by term name) and derives the joint permutation from the joint names:
-`left_*` and `right_*` joints swap, roll and yaw joints change sign. The permutations are
-assembled from the live observation manager, so they always match the observation layout;
-a term without an entry in `TERM_KINDS` raises an error.
+- `VelocityFlat-G1-PPO`: PPO baseline
+- `VelocityFlat-G1-PPOaug`: PPO with symmetry data augmentation
+- `VelocityFlat-G1-PPOeqic`: PPO with an equivariant actor-critic
 
-## Layout
+Train:
 
-Mirrors mjlab's package layout.
-
-```
-src/symmloco/
-  rl/config.py              SymmlocoPpoAlgorithmCfg (PPO plus symmetry_cfg), EquivariantOnPolicyRunnerCfg
-  rl/runner.py              EquivariantOnPolicyRunner: injects the task's reflections into the models
-  tasks/velocity/
-    mdp/symmetry.py         term kinds, joint/observation/action reflections, mirror_batch
-    config/g1/rl_cfg.py     one runner config per method
-    config/g1/__init__.py   registers VelocityFlat-G1-{PPO,PPOaug,PPOeqic}
+```bash
+uv run train <TASK_ID> --env.scene.num-envs 4096 --agent.seed <SEED>
 ```
 
-PPO and PPOaug run with mjlab's `VelocityOnPolicyRunner`. PPOeqic runs with
-`EquivariantOnPolicyRunner`, which is task-agnostic: it calls the functions named by
-`observation_reflection_func` and `action_reflection_func` in its config. All three use
-mjlab's `unitree_g1_flat_env_cfg`.
+Play a checkpoint from a W&B run:
+
+```bash
+uv run play <TASK_ID> --wandb-run-path <ENTITY>/<PROJECT>/<RUN_ID>
+```
+
+## Results
+
+Unitree G1, 3 seeds per method, 4096 environments, 3000 iterations.
+
+![Tracking reward and gait asymmetry of PPO, PPOaug and PPOeqic](https://raw.githubusercontent.com/HybridRobotics/SymmLoco/assets/results.png)
+
+A second robot (blue) walks behind a half mirror and gets the mirrored command. In the
+mirror, the reflection of the first robot (silver) falls on top of it; a symmetric policy
+keeps the two together. Click a clip for the full-resolution video.
+
+[![Forward walking](https://raw.githubusercontent.com/HybridRobotics/SymmLoco/assets/forward.gif)](https://github.com/HybridRobotics/SymmLoco/blob/assets/forward.mp4)
+
+[![Sidestepping](https://raw.githubusercontent.com/HybridRobotics/SymmLoco/assets/sidestep.gif)](https://github.com/HybridRobotics/SymmLoco/blob/assets/sidestep.mp4)
+
+[![Walking a circle](https://raw.githubusercontent.com/HybridRobotics/SymmLoco/assets/circle.gif)](https://github.com/HybridRobotics/SymmLoco/blob/assets/circle.mp4)
+
+## Citation
+
+```bibtex
+@inproceedings{su2024leveraging,
+  title={Leveraging Symmetry in RL-based Legged Locomotion Control},
+  author={Su, Zhi and Huang, Xiaoyu and Ordo{\~n}ez-Apraez, Daniel and Li, Yunfei and Li, Zhongyu and Liao, Qiayuan and Turrisi, Giulio and Pontil, Massimiliano and Semini, Claudio and Wu, Yi and Sreenath, Koushil},
+  booktitle={2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  year={2024}
+}
+```

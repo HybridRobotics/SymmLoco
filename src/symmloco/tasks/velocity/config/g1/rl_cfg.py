@@ -15,6 +15,8 @@ def unitree_g1_ppo_runner_cfg() -> RslRlOnPolicyRunnerCfg:
   cfg = mjlab_unitree_g1_ppo_runner_cfg()
   cfg.experiment_name = "g1_velocity_flat_PPO"
   cfg.wandb_project = "symmloco"
+  cfg.max_iterations = 3_000
+  cfg.save_interval = 500
   return cfg
 
 
